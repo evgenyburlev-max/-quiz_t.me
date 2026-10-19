@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Архитектура отношений | Надежда Бурлева</title>
+  
+  <!-- Telegram WebApp SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+  </script>
+
+  <!-- Yandex.Metrika counter -->
+  <script type="text/javascript">
+     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+     m[i].l=1*new Date();
+     for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+     k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+     (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+     ym(113668057, "init", {
+          clickmap:true,
+          trackLinks:true,
+          accurateTrackBounce:true,
+          webvisor:true
+     });
+  </script>
+  <noscript><div><img src="https://mc.yandex.ru/watch/113668057" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+  <!-- /Yandex.Metrika counter -->
+
+  <!-- Мета-теги OpenGraph для Threads / соцсетей -->
+  <meta name="description" content="Авторская диагностика союза на стыке системной коучинговой логики и глубинных законов поля.">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Архитектура отношений | Надежда Бурлева">
+  <meta property="og:description" content="Новый виток, пересборка или завершение? Пройдите глубокую системную диагностику союза за 3 минуты.">
+  <meta property="og:image" content="avatar.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #11100f;
+      --card-bg: #181614;
+      --card-border: rgba(212, 175, 55, 0.22);
+      --accent-gold: #c7a462;
+      --accent-gold-light: #e4c58a;
+      --accent-glow: rgba(199, 164, 98, 0.14);
+      --text-main: #fbf9f5;
+      --text-muted: #aca498;
+      --font-display: "Cinzel", Georgia, serif;
+      --font-serif: "Cormorant Garamond", Georgia, serif;
+      --font-sans: "Montserrat", -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 10%, #2a231b 0%, var(--bg) 100%);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: max(14px, env(safe-area-inset-top)) 14px max(14px, env(safe-area-inset-bottom)) 14px;
+      line-height: 1.5;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      max-height: 94dvh;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 30px 22px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.75), 0 0 45px var(--accent-glow);
+      position: relative;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      backdrop-filter: blur(12px);
+    }
+
+    .container::-webkit-scrollbar {
+      width: 3px;
+    }
+    .container::-webkit-scrollbar-thumb {
+      background: rgba(199, 164, 98, 0.25);
+      border-radius: 4px;
+    }
+
+    .hero-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .avatar-wrapper {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      padding: 3px;
+      background: linear-gradient(135deg, var(--accent-gold-light), rgba(199, 164, 98, 0.25));
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6), 0 0 25px var(--accent-glow);
+      margin-bottom: 14px;
+    }
+
+    .hero-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center 18%;
+      display: block;
+      background: #24201c;
+    }
+
+    .brand-monogram {
+      font-family: var(--font-display);
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      color: var(--accent-gold);
+      margin-bottom: 2px;
+    }
+
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 16.5px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      background: linear-gradient(135deg, #fcedc7 0%, var(--accent-gold) 45%, #9d762b 75%, #f5e1a4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+
+    .brand-rank {
+      font-size: 9.5px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      line-height: 1.4;
+      max-width: 320px;
+      margin: 4px auto 0;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+    }
+
+    h1 {
+      font-size: 25px;
+      line-height: 1.25;
+      margin-bottom: 14px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .lead-text {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13.5px;
+      margin-bottom: 12px;
+      line-height: 1.55;
+    }
+
+    .start-meta {
+      text-align: center;
+      color: var(--accent-gold-light);
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      margin: 18px 0 16px;
+    }
+
+    .divider {
+      width: 44px;
+      height: 1px;
+      background: var(--accent-gold);
+      margin: 18px auto;
+      opacity: 0.45;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .btn-back {
+      background: transparent;
+      border: none;
+      color: var(--accent-gold);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 6px 4px 0;
+    }
+
+    .btn-back:active { opacity: 0.6; }
+
+    .question-counter {
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 3px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 2px;
+      margin-bottom: 22px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-gold), var(--accent-gold-light));
+      transition: width 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    .question-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      color: #fff;
+      margin-bottom: 20px;
+      line-height: 1.35;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.025);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 15px 17px;
+      color: var(--text-main);
+      text-align: left;
+      font-size: 13.5px;
+      line-height: 1.45;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s ease;
+    }
+
+    .option-btn:active {
+      transform: scale(0.985);
+      border-color: var(--accent-gold);
+      background: rgba(199, 164, 98, 0.12);
+    }
+
+    .btn-main {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #c7a462 0%, #dfba76 100%);
+      color: #141210;
+      text-align: center;
+      padding: 16px 14px;
+      border-radius: 14px;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 10px 25px rgba(199, 164, 98, 0.25);
+      transition: all 0.2s ease;
+      margin-top: 18px;
+    }
+
+    .btn-main:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .bullet-point {
+      margin-bottom: 12px;
+      padding-left: 20px;
+      position: relative;
+      font-size: 13px;
+      color: #cfcac2;
+      line-height: 1.5;
+    }
+
+    .bullet-point::before {
+      content: "✦";
+      position: absolute;
+      left: 0;
+      top: 1px;
+      font-size: 11px;
+      color: var(--accent-gold);
+    }
+
+    .metric-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(199, 164, 98, 0.2);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 0;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 28px;
+      color: var(--accent-gold-light);
+      letter-spacing: 0.05em;
+    }
+
+    .metric-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .result-section-title {
+      font-size: 11.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--accent-gold);
+      margin-top: 22px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .quote-box {
+      border-left: 2px solid var(--accent-gold);
+      padding: 12px 16px;
+      background: rgba(199, 164, 98, 0.06);
+      border-radius: 0 10px 10px 0;
+      font-family: var(--font-serif);
+      font-style: italic;
+      margin: 16px 0;
+      color: #ede7dd;
+      font-size: 15.5px;
+      line-height: 1.45;
+    }
+
+    .cta-subtext {
+      text-align: center;
+      font-size: 12.5px;
+      margin-top: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding: 0 4px;
+    }
+
+    .fade-anim {
+      animation: fadeIn 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="main-container">
+
+    <!-- СТАРТОВЫЙ ЭКРАН -->
+    <div id="start-screen" class="fade-anim">
+      <div class="hero-profile">
+        <div class="avatar-wrapper">
+          <img src="avatar.jpg" alt="Надежда Бурлева" class="hero-avatar">
+        </div>
+        <div class="brand-badge">
+          <div class="brand-monogram">✦ NB ✦</div>
+          <div class="brand-name">НАДЕЖДА БУРЛЕВА</div>
+          <div class="brand-rank">Помогаю сохранить брак или вовремя спасти себя</div>
+        </div>
+      </div>
+
+      <h1>Новый виток, пересборка<br>или завершение?</h1>
+      
+      <p class="lead-text">Тест за 3 минуты вскрывает скрытые трещины вашего союза и показывает, куда на самом деле утекает тепло, секс и уважение.</p>
+      
+      <p class="lead-text" style="color: #cfcac2; font-size: 13px; margin-bottom: 8px;">Вы получите честный рентген вашего союза без иллюзий, а также персональный аудит с готовыми пошаговыми рекомендациями.</p>
+
+      <p class="start-meta">12 вопросов (≅3 мин)</p>
+
+      <button class="btn-main" onclick="startQuiz()">Пройти диагностику →</button>
+    </div>
+
+    <!-- ЭКРАН ВОПРОСОВ -->
+    <div id="quiz-screen" class="hidden">
+      <div class="quiz-header">
+        <button class="btn-back" onclick="goBack()">← Назад</button>
+        <span id="question-number" class="question-counter"></span>
+      </div>
+
+      <div class="progress-bar-container">
+        <div id="progress" class="progress-bar"></div>
+      </div>
+
+      <div id="question-text" class="question-title"></div>
+      <div id="options-container" class="options"></div>
+    </div>
+
+    <!-- ЭКРАН РЕЗУЛЬТАТА -->
+    <div id="result-screen" class="hidden">
+      <div style="display: inline-block; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-gold-light); border: 1px solid rgba(199, 164, 98, 0.35); padding: 5px 14px; border-radius: 50px; background: rgba(199, 164, 98, 0.05); font-weight: 500; margin-bottom: 12px;" id="res-badge">Архитектурный аудит</div>
+      
+      <h2 id="res-title" style="color: #fff; margin-bottom: 8px; font-size: 23px; line-height: 1.25;"></h2>
+
+      <!-- Оцифрованная метрика -->
+      <div class="metric-card">
+        <div class="metric-value" id="res-score-display">0 / 48</div>
+        <div class="metric-label" id="res-score-status">Индекс целостности конструкции</div>
+      </div>
+
+      <p id="res-desc" style="font-size: 13.5px; margin-bottom: 18px; color: #b7b0a5; line-height: 1.6;"></p>
+
+      <div class="divider"></div>
+
+      <div class="result-section-title">3 системных фокуса</div>
+      <div id="res-recs"></div>
+
+      <div class="result-section-title">Сильный вопрос партнеру</div>
+      <div id="res-question" class="quote-box"></div>
+
+      <!-- Главная кнопка перехода -->
+      <a id="cta-link" href="#" class="btn-main" onclick="handleTelegramRedirect(event)">Задать вопрос Надежде →</a>
+      
+      <!-- Поясняющий текст -->
+      <p class="cta-subtext">
+        Безоплатный разбор в Telegram. Вы можете задать Надежде один волнующий вопрос по вашей ситуации и получить персональный аудио-ответ.
+      </p>
+    </div>
+
+  </div>
+
+  <script>
+    /* ============================================================
+       СИСТЕМА СОБЫТИЙ И ТРЕКИНГА (ДЛЯ АНАЛИТИКИ И МЕТРИКИ)
+       ============================================================ */
+    function trackStep(eventName, data = {}) {
+      console.log(`[Diagnostic Event] ${eventName}:`, data);
+      if (typeof ym === 'function') {
+        ym(113668057, 'reachGoal', eventName, data);
+      }
+    }
+
+    /* ============================================================
+       СИНТЕЗАТОР ЗВУКА
+       ============================================================ */
+    let audioCtx = null;
+
+    function getAudioContext() {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function playSound(type) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        if (type === 'chime') {
+          [1046.5, 1318.5, 1567.9].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.04);
+            gain.gain.setValueAtTime(0, now + i * 0.04);
+            gain.gain.linearRampToValueAtTime(0.04 / (i + 1), now + i * 0.04 + 0.02);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.04 + 0.8);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.04);
+            osc.stop(now + i * 0.04 + 0.85);
+          });
+        } else if (type === 'back') {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.03, now + 0.02);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.4);
+        } else if (type === 'result') {
+          [392.0, 493.88, 587.33, 783.99, 1046.5].forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + i * 0.05);
+            gain.gain.setValueAtTime(0, now + i * 0.05);
+            gain.gain.linearRampToValueAtTime(0.05, now + i * 0.05 + 0.04);
+            gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.05 + 1.6);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + i * 0.05);
+            osc.stop(now + i * 0.05 + 1.65);
+          });
+        }
+      } catch (e) {}
+    }
+
+    /* ============================================================
+       ВОПРОСЫ
+       ============================================================ */
+    const questions = [
+      {
+        q: "О чём вы говорите, когда остаетесь наедине без детей и бытовых дел?",
+        options: [
+          { text: "Обо всём: планах, чувствах, нам по-прежнему тепло и интересно вдвоем", score: 4 },
+          { text: "В основном о быте, детях или делах — душевной глубины стало меньше", score: 3 },
+          { text: "Чаще натыкаемся на напряжение или повисает тяжелая тишина", score: 2 },
+          { text: "Диалога нет: любой разговор грозит претензией или обесцениванием", score: 1 }
+        ]
+      },
+      {
+        q: "Как в вашей паре распределяется инициатива (свидания, тепло, шаги навстречу)?",
+        options: [
+          { text: "Равноценно: импульс идет с обеих сторон", score: 4 },
+          { text: "Чаще проявляю я, но партнер с благодарностью откликается", score: 3 },
+          { text: "Всё держится исключительно на мне — если замолчу, наступит вакуум", score: 2 },
+          { text: "Партнер закрыт, мои шаги наталкиваются на холод или раздражение", score: 1 }
+        ]
+      },
+      {
+        q: "Как проходят ваши разногласия и конфликты?",
+        options: [
+          { text: "Мы спорим, но слышим друг друга и приходим к договоренностям", score: 4 },
+          { text: "Спорим эмоционально, ходим по кругу, но потом миримся", score: 3 },
+          { text: "Партнер уходит в многодневный игнор или замыкается в себе", score: 2 },
+          { text: "В ссорах присутствуют грубость, манипуляции и унижение достоинства", score: 1 }
+        ]
+      },
+      {
+        q: "С каким внутренним состоянием вы возвращаетесь домой или ждете встречи?",
+        options: [
+          { text: "Спокойствие, предвкушение, ощущение безопасности и опоры", score: 4 },
+          { text: "Привычное спокойствие, хотя былой яркости чувств уже нет", score: 3 },
+          { text: "Фоновая тревога: «в каком он сегодня настроении?»", score: 2 },
+          { text: "Ощущение опустошения, скованности или желания побыть одной", score: 1 }
+        ]
+      },
+      {
+        q: "Что происходит с вашей физической близостью и влечением?",
+        options: [
+          { text: "Близость регулярна, между нами есть сексуальный контакт и притяжение", score: 4 },
+          { text: "Секс стал редким или предсказуемым из-за усталости и быта", score: 3 },
+          { text: "Близость происходит как супружеский долг, влечение угасло", score: 2 },
+          { text: "Тактильный контакт отсутствует, прикосновения вызывают отторжение", score: 1 }
+        ]
+      },
+      {
+        q: "Чувствуете ли вы признание своей женской ценности от партнера?",
+        options: [
+          { text: "Да, он уважает мой выбор, слышит просьбы и благодарен мне", score: 4 },
+          { text: "Партнер ценит меня, но редко говорит об этом вслух", score: 3 },
+          { text: "Мой вклад воспринимается как должное, я чувствую себя «удобной»", score: 2 },
+          { text: "Мои достижения обесцениваются, преобладает фоновая критика", score: 1 }
+        ]
+      },
+      {
+        q: "Что происходит, когда вы открыто говорите о своей усталости или слабости?",
+        options: [
+          { text: "Партнер берет заботы на себя и дает мне восстановиться", score: 4 },
+          { text: "Выслушает, но действовать начинает только после прямых инструкций", score: 3 },
+          { text: "Раздражается: «у всех проблемы, мне тоже нелегко»", score: 2 },
+          { text: "Моя уязвимость потом используется против меня в споре", score: 1 }
+        ]
+      },
+      {
+        q: "Как выглядит баланс ответственности за будущее и семью?",
+        options: [
+          { text: "Мы — команда, решения принимаем согласованно и зрело", score: 4 },
+          { text: "Каждый закрывает свой блок, но глобальное планирование часто буксует", score: 3 },
+          { text: "Я чувствую себя «мамочкой», которая тянет за собой взрослого сына", score: 2 },
+          { text: "Партнер полностью отстранился от ответственности за семью", score: 1 }
+        ]
+      },
+      {
+        q: "Бывают ли у вас мысли о жизни без этого партнера?",
+        options: [
+          { text: "Нет, я осознанно выбираю быть именно с этим человеком", score: 4 },
+          { text: "Редко, только на пике сильной усталости или ссоры", score: 3 },
+          { text: "Часто ловлю себя на мысли, что одной эмоционально было бы легче", score: 2 },
+          { text: "Я держусь только из-за детей, жилья или страха неизвестности", score: 1 }
+        ]
+      },
+      {
+        q: "Что происходит, когда вы обозначаете свои границы («со мной так нельзя»)?",
+        options: [
+          { text: "Партнер корректирует поведение и уважает границы", score: 4 },
+          { text: "Сначала сопротивляется, но со временем принимает правило", score: 3 },
+          { text: "Обижается, наказывает молчанием или обвиняет в эгоизме", score: 2 },
+          { text: "Границы демонстративно нарушаются снова и снова", score: 1 }
+        ]
+      },
+      {
+        q: "Какое метасообщение передает ваше тело рядом с партнером?",
+        options: [
+          { text: "Расслабление, мягкость, наполненность и спокойствие", score: 4 },
+          { text: "Нейтральный фон, фокус на контроле бытовых процессов", score: 3 },
+          { text: "Сжатые челюсти, напряжение в плечах, состояние боевой готовности", score: 2 },
+          { text: "Сжатие в груди, упадок сил, желание закрыться", score: 1 }
+        ]
+      },
+      {
+        q: "Каким вы видите вектор вашего союза через 3 года?",
+        options: [
+          { text: "Зрелый союз, где мы растем вместе и усиливаем друг друга", score: 4 },
+          { text: "Хорошие отношения, если научимся заново слышать друг друга", score: 3 },
+          { text: "Если ничего не изменить — я окончательно эмоционально выгорю", score: 2 },
+          { text: "Не вижу совместного будущего без риска потерять себя", score: 1 }
+        ]
+      }
+    ];
+
+    const results = {
+      1: {
+        title: "Фундамент сохранён",
+        desc: "Ваш союз обладает прочной несущей конструкцией: между вами живы базовое уважение и безопасность. Текущий спад — это не конец любви, а закономерный переход на уровень взрослого союза, где необходимо обновить внутренние правила.",
+        recs: [
+          "Переведите общение с бытовых тем на уровень личных чувств и смыслов.",
+          "Верните элемент здоровой дистанции: избыточная слитность гасит страсть.",
+          "Инициируйте качественное время только вдвоем без роли родителей."
+        ],
+        question: "«Что из того, что раньше наполняло нас двоих, мы незаметно потеряли в рутине?»"
+      },
+      2: {
+        title: "Связь нуждается в перестройке",
+        desc: "Фундамент цел, но в коммуникации накопились трещины и скрытые обиды. Логические разговоры заходят в тупик, потому что нарушена системная динамика пары. Партнер закрывается, когда чувствует скрытые претензии.",
+        recs: [
+          "Остановите попытки перевоспитывать партнера логикой и доводами.",
+          "Снимите гиперконтроль: мужчина не проявляет силу там, где женщина заполняет собой всё поле.",
+          "Обозначьте свои истинные желания без чувства вины и обороны."
+        ],
+        question: "«Если стереть накопившуюся усталость — ради чего важного мы когда-то выбрали друг друга?»"
+      },
+      3: {
+        title: "Конструкция держится на вас",
+        desc: "В союзе произошел перекос: вы отдаете больше, чем получаете, обслуживая эмоциональный климат в одиночку. Мужчина занял позицию пассивного наблюдателя, пока ваше тело сигнализирует накопленным истощением.",
+        recs: [
+          "Экстренно заберите фокус внимания и верните его себе: в отдых, тело и радость.",
+          "Прекратите эмоциональное спасательство: дайте партнеру проявить мужскую ответственность.",
+          "Проведите ревизию личных границ: где вы предаете себя ради удобства союза."
+        ],
+        question: "«Готов ли ты вкладываться в наше совместное будущее на равных, или тебя устраивает текущая дистанция?»"
+      },
+      4: {
+        title: "Фундамент небезопасен",
+        desc: "Архитектура отношений находится в зоне риска: нарушено базовое условие близости — безопасность и уважение. Попытки «чинить» союз в одиночку разрушают ваше достоинство и психический ресурс.",
+        recs: [
+          "Сместите приоритет со спасения брака на возвращение собственной целостности.",
+          "Осознайте: партнер не изменится до тех пор, пока вы соглашаетесь на текущий формат.",
+          "Выстройте независимые опоры: психологическую, эмоциональную и территориальную."
+        ],
+        question: "«Понимаешь ли ты, что то, как мы живем сейчас, шаг за шагом убивает наше уважение?»"
+      }
+    };
+
+    let currentStep = 0;
+    let selectedScores = [];
+    let currentResultData = null;
+
+    function scrollToTop() {
+      const container = document.getElementById('main-container');
+      if (container) {
+        container.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+
+    function startQuiz() {
+      playSound('chime');
+      trackStep('quiz_started');
+
+      document.getElementById('start-screen').classList.add('hidden');
+      const quiz = document.getElementById('quiz-screen');
+      quiz.classList.remove('hidden');
+      quiz.classList.add('fade-anim');
+      scrollToTop();
+      showQuestion();
+    }
+
+    function showQuestion() {
+      const q = questions[currentStep];
+      document.getElementById('question-number').innerText = `${currentStep + 1} / ${questions.length}`;
+      document.getElementById('question-text').innerText = q.q;
+
+      const progressPercent = ((currentStep) / questions.length) * 100;
+      document.getElementById('progress').style.width = `${progressPercent}%`;
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      q.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerText = opt.text;
+        btn.onclick = () => selectOption(opt.score);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectOption(score) {
+      playSound('chime');
+      selectedScores[currentStep] = score;
+      trackStep(`question_${currentStep + 1}_answered`, { score: score });
+      currentStep++;
+
+      const quizScreen = document.getElementById('quiz-screen');
+      quizScreen.classList.remove('fade-anim');
+      void quizScreen.offsetWidth;
+      quizScreen.classList.add('fade-anim');
+      scrollToTop();
+
+      if (currentStep < questions.length) {
+        showQuestion();
+      } else {
+        setTimeout(showResult, 200);
+      }
+    }
+
+    function goBack() {
+      playSound('back');
+      scrollToTop();
+
+      if (currentStep > 0) {
+        currentStep--;
+        const quizScreen = document.getElementById('quiz-screen');
+        quizScreen.classList.remove('fade-anim');
+        void quizScreen.offsetWidth;
+        quizScreen.classList.add('fade-anim');
+        showQuestion();
+      } else {
+        document.getElementById('quiz-screen').classList.add('hidden');
+        const startScreen = document.getElementById('start-screen');
+        startScreen.classList.remove('hidden');
+        startScreen.classList.add('fade-anim');
+      }
+    }
+
+    function showResult() {
+      playSound('result');
+
+      document.getElementById('quiz-screen').classList.add('hidden');
+      const resScreen = document.getElementById('result-screen');
+      resScreen.classList.remove('hidden');
+      resScreen.classList.add('fade-anim');
+      scrollToTop();
+
+      const totalScore = selectedScores.reduce((sum, val) => sum + val, 0);
+
+      let resKey = 4;
+      if (totalScore >= 39) resKey = 1;
+      else if (totalScore >= 29) resKey = 2;
+      else if (totalScore >= 19) resKey = 3;
+
+      const res = results[resKey];
+      currentResultData = { res, totalScore };
+
+      trackStep('quiz_completed', { score: totalScore, result: res.title });
+
+      document.getElementById('res-title').innerText = res.title;
+      document.getElementById('res-score-display').innerText = `${totalScore} / 48`;
+      document.getElementById('res-desc').innerText = res.desc;
+
+      const recsContainer = document.getElementById('res-recs');
+      recsContainer.innerHTML = '';
+      res.recs.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'bullet-point';
+        div.innerText = r;
+        recsContainer.appendChild(div);
+      });
+
+      document.getElementById('res-question').innerText = res.question;
+
+      // Формирование точного сообщения для Telegram
+      const message = `Здравствуйте, Надежда! Прошла вашу диагностику союза (результат: «${res.title}», ${totalScore} баллов). Хочу задать один вопрос по своей ситуации и узнать ваш взгляд на нее.`;
+      const encodedMsg = encodeURIComponent(message);
+      
+      // Ссылки на Telegram nadezhda_burleva
+      window.tgRedirectUrl = `https://t.me/nadezhda_burleva?text=${encodedMsg}`;
+      window.tgAppUrl = `tg://resolve?domain=nadezhda_burleva&text=${encodedMsg}`;
+      
+      document.getElementById('cta-link').href = window.tgRedirectUrl;
+    }
+
+    /* Нативный редирект в Telegram с фиксацией цели */
+    function handleTelegramRedirect(e) {
+      if (e) e.preventDefault();
+      trackStep('tg_click');
+
+      // Если тест открыт внутри Telegram WebApp, открываем диалог нативно
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openTelegramLink) {
+        window.Telegram.WebApp.openTelegramLink(window.tgRedirectUrl);
+      } else {
+        // Если открыт во внешнем браузере, вызываем приложение по протоколу
+        setTimeout(() => {
+          window.location.href = window.tgAppUrl;
+        }, 50);
+      }
+    }
+  </script>
+</body>
+</html>
